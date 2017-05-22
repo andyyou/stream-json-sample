@@ -1,6 +1,7 @@
 var express = require('express')
 var router = express.Router()
 var highland = require('highland')
+var utils = require('../utils/points')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -21,23 +22,9 @@ router.get('/data', function (req, res, next) {
   }
   var json = JSON.stringify(response)
   var parts = json.split('"#{pixels}"')
-  var points = [
-    {
-      x: 1,
-      y: 2,
-      color: 'orange'
-    },
-    {
-      x: 2,
-      y: 2,
-      color: 'orange'
-    }
-  ]
-  var pointsStream = highland(points)
-    .map(function (p) {
-      return JSON.stringify(p)
-    })
-    .intersperse(',')
+  var pointsStream = utils.getFullStream()
+        .map(JSON.stringify)
+        .intersperse(',')
 
   highland([
     parts[0],
